@@ -18,6 +18,11 @@ angular.module('opentok-meet').factory('ReportService', [
           videoScore: report.videoScore,
           description: report.description
         });
+
+        if (subscriber._.pc && subscriber._.pc.trace) {
+          rtcstats.trace('userfeedback', { mediaType: 'audio', score: report.audioScore });
+          rtcstats.trace('userfeedback', { mediaType: 'video', score: report.videoScore });
+        }
       }
     };
   }
