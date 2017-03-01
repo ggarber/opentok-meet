@@ -1,4 +1,18 @@
 var webpack = require('webpack');
+var GitRevisionPlugin = require('git-revision-webpack-plugin');
+var gitRevisionPlugin = new GitRevisionPlugin();
+
+var version;
+var commitHash;
+
+try {
+  version = JSON.stringify(gitRevisionPlugin.version());
+  commitHash = JSON.stringify(gitRevisionPlugin.commithash());
+} catch(e) {
+  // In Heroku we're not running from a git repo and the commit hash is in the path
+  version = 'unknown';
+  commitHash = process.env.PWD;
+}
 
 module.exports = {
     entry: {
@@ -6,8 +20,8 @@ module.exports = {
         room: './src/js/app.js',
         screen: './src/js/screen/app.js',
         whiteboard: './src/js/whiteboard/app.js',
-        'webrtc-intercept': './src/js/webrtc-intercept.js',
-        'ot-intercept': './src/js/ot-intercept.js'
+        'webrtc-intercept': './src/js/h264/webrtc-intercept.js',
+        'ot-intercept': './src/js/h264/ot-intercept.js'
     },
     output: {
         path: './public/js/',
@@ -22,6 +36,10 @@ module.exports = {
         ]
     },
     plugins: [
+      new webpack.DefinePlugin({
+          VERSION: version,
+          COMMITHASH: commitHash,
+      }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin(),
       new webpack.optimize.CommonsChunkPlugin({

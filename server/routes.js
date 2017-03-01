@@ -78,8 +78,10 @@ module.exports = function (app, config, redis, ot, redirectSSL) {
             });
           }
         }
+        console.log(req.query);
         res.render('room', {
           room: room,
+          query: req.query,
           chromeExtensionId: config.chromeExtensionId
         });
       }
